@@ -1,0 +1,14 @@
+supplier_id,name,abn,country,state,category,parent_company,annual_spend_aud,contact_email
+S001,CleanPro Supplies Pty Ltd,DEMO-ABN-0001,Australia,NSW,cleaning consumables distributor,,25790,orders@cleanpro.example
+S002,Coastal Hygiene Wholesale Pty Ltd,DEMO-ABN-0002,Australia,NSW,paper and hygiene products,,31920,sales@coastalhygiene.example
+S003,Pacific Star Trading Pty Ltd,DEMO-ABN-0003,Australia,NSW,import agent - textiles,,19050,import@pacificstar.example
+S004,Uniform Hub Australia Pty Ltd,DEMO-ABN-0004,Australia,VIC,workwear and uniforms,,13095,service@uniformhub.example
+S005,BrightChem Manufacturing Pty Ltd,DEMO-ABN-0005,Australia,NSW,cleaning chemicals manufacturer,,16810,trade@brightchem.example
+S006,NordicClean Equipment Pty Ltd,DEMO-ABN-0006,Australia,NSW,cleaning machinery,NordicClean GmbH,24240,au@nordicclean.example
+S007,SafeStep Labour Solutions Pty Ltd,DEMO-ABN-0007,Australia,NSW,labour hire,,105060,ops@safestep.example
+S008,GreenBag Packaging Pty Ltd,DEMO-ABN-0008,Australia,QLD,packaging,,7410,orders@greenbag.example
+S009,SunCoast Solar & Electrical Pty Ltd,DEMO-ABN-0009,Australia,NSW,solar and electrical contractor,,24800,jobs@suncoastsolar.example
+S010,Metro Fleet Leasing Pty Ltd,DEMO-ABN-0010,Australia,NSW,vehicle leasing,,21600,accounts@metrofleet.example
+S011,DeskLine Office Supplies Pty Ltd,DEMO-ABN-0011,Australia,NSW,office supplies,,4200,hello@deskline.example
+S012,TechFix IT Services Pty Ltd,DEMO-ABN-0012,Australia,NSW,IT hardware and support,,18088,support@techfix.example
+S013,AquaPure Water Coolers Pty Ltd,DEMO-ABN-0013,Australia,NSW,equipment rental,,1980,rentals@aquapure.example

@@ -1,0 +1,22 @@
+Reasonable Steps (slavery_compliance_agent)
+Built for the Open Agent Hackathon 2026.
+
+This project includes:
+- test/conformance/world-model-runner.ts, copied from the Meterless engines
+  repository (github.com/meterless/meterless, engines/world-model/conformance),
+  Apache License 2.0. Only the default implementation path was changed.
+- src/engines/world-model/, an implementation of the Meterless World Model
+  specification (engines/world-model/AGENTS.md, Apache License 2.0).
+
+Reference data:
+- data/reference/dol_goods_excerpt.csv: excerpt of the US Department of Labor
+  List of Goods Produced by Child Labor or Forced Labor (2024), from dol.gov.
+  US Government work, public domain.
+- data/reference/sector_risk.csv: sector list based on the Australian Human
+  Rights Commission's information for suppliers on modern slavery.
+- The Australian Sanctions Consolidated List is downloaded by
+  `npm run fetch:data` from dfat.gov.au and is not redistributed here.
+- data/reference/sanctions_test_fixture.csv contains synthetic names for
+  testing only. It is not sanctions data.
+
+All companies, people, invoices and declarations in data/demo are fictional.

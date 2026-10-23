@@ -1,0 +1,84 @@
+{
+  "source": "Supplier declaration portal (demo data). Suppliers type their own details, so records carry no internal supplier ID.",
+  "generated_at": "2026-10-01T00:00:00Z",
+  "data": [
+    {
+      "decl_id": "D-001",
+      "supplier_name": "Cleanpro Supply Co",
+      "abn": "",
+      "respondent_email": "j.wong@cleanpro-supplies.example",
+      "submitted_at": "2026-08-02",
+      "origin_countries": "Malaysia; Australia",
+      "manufacturers": "Sunrise Glove Industries Sdn. Bhd. (Malaysia)",
+      "has_code_of_conduct": true,
+      "third_party_audit": "None provided",
+      "recruitment_fees_policy": "Not stated",
+      "notes": "Gloves are made by one Malaysian manufacturer. The manufacturer holds ISO 9001. No social audit was supplied."
+    },
+    {
+      "decl_id": "D-002",
+      "supplier_name": "Pacific Star Trading Co.",
+      "abn": "DEMO-ABN-0003",
+      "respondent_email": "director@pacificstar.example",
+      "submitted_at": "2026-08-09",
+      "origin_countries": "China",
+      "manufacturers": "Yiwu Bright Textile Co., Ltd",
+      "has_code_of_conduct": false,
+      "third_party_audit": "None",
+      "recruitment_fees_policy": "Not stated",
+      "notes": "Microfibre products come from one factory in Zhejiang. No factory visit or audit has been conducted."
+    },
+    {
+      "decl_id": "D-003",
+      "supplier_name": "Uniform Hub",
+      "abn": "",
+      "respondent_email": "compliance@uniformhub.example",
+      "submitted_at": "2026-07-21",
+      "origin_countries": "Bangladesh; China",
+      "manufacturers": "Dhaka Apparel Works Ltd",
+      "has_code_of_conduct": true,
+      "third_party_audit": "Third-party social audit (amfori BSCI) dated November 2025, rating C",
+      "recruitment_fees_policy": "Supplier code prohibits worker-paid recruitment fees",
+      "notes": "Corrective action plan from the 2025 audit is in progress. Hi-vis vests are sourced from a separate trading company in China."
+    },
+    {
+      "decl_id": "D-004",
+      "supplier_name": "Nordic Clean Equipment",
+      "abn": "DEMO-ABN-0006",
+      "respondent_email": "au@nordicclean.example",
+      "submitted_at": "2026-08-15",
+      "origin_countries": "Germany; China",
+      "manufacturers": "NordicClean GmbH; battery cells and backpack vacuums from contract suppliers in China",
+      "has_code_of_conduct": true,
+      "third_party_audit": "Group-level supplier audit programme, results not shared",
+      "recruitment_fees_policy": "Group policy prohibits worker-paid recruitment fees",
+      "notes": "Battery cell suppliers are not named in the declaration."
+    },
+    {
+      "decl_id": "D-005",
+      "supplier_name": "Safe Step Labour Solutions",
+      "abn": "",
+      "respondent_email": "ops@safestep.example",
+      "submitted_at": "2026-08-30",
+      "origin_countries": "Australia",
+      "manufacturers": "",
+      "has_code_of_conduct": true,
+      "third_party_audit": "None",
+      "recruitment_fees_policy": "No fees are charged to workers",
+      "notes": "Workers are employed under the Cleaning Services Award. Pay records are available on request. Accommodation is not provided to workers."
+    },
+    {
+      "decl_id": "D-006",
+      "supplier_name": "Sun Coast Solar and Electrical",
+      "abn": "",
+      "respondent_email": "pm@suncoastsolar.example",
+      "submitted_at": "2026-09-02",
+      "origin_countries": "China",
+      "manufacturers": "Module brand not specified",
+      "has_code_of_conduct": false,
+      "third_party_audit": "None",
+      "recruitment_fees_policy": "Not stated",
+      "notes": "Panels were bought through a wholesaler. Polysilicon traceability is not available."
+    }
+  ]
+}

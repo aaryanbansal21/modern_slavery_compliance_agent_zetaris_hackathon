@@ -1,0 +1,47 @@
+{
+  "name": "slavery-compliance-agent",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "Reasonable Steps: an agent system that helps small suppliers answer corporate modern slavery questionnaires with evidence. Zetaris data layer, Meterless World Model engine, Meterless Nightshift with NVIDIA Nemotron.",
+  "license": "Apache-2.0",
+  "engines": {
+    "node": ">=20"
+  },
+  "scripts": {
+    "start": "tsx src/server.ts",
+    "dev": "tsx watch src/server.ts",
+    "demo": "tsx scripts/run-demo.ts",
+    "prepare:data": "tsx scripts/prepare-data.ts",
+    "fetch:data": "tsx scripts/fetch-reference-data.ts",
+    "seed:postgres": "tsx scripts/seed-postgres.ts",
+    "upload:minio": "tsx scripts/upload-minio.ts",
+    "zetaris:setup": "tsx scripts/zetaris-setup.ts",
+    "zetaris:verify": "tsx scripts/zetaris-verify.ts",
+    "nightshift:check": "tsx scripts/nightshift-check.ts",
+    "make:questionnaire": "tsx scripts/make-questionnaire-docx.ts",
+    "conformance": "tsx test/conformance/world-model-runner.ts",
+    "test": "vitest run",
+    "typecheck": "tsc --noEmit",
+    "reset": "tsx scripts/reset.ts"
+  },
+  "dependencies": {
+    "@duckdb/node-api": "^2.0.0-r.1",
+    "docx": "^9.13.0",
+    "dotenv": "^18.0.9",
+    "exceljs": "^4.4.0",
+    "express": "^4.22.3",
+    "mammoth": "^1.13.0",
+    "minio": "^8.0.7",
+    "pg": "^8.23.1",
+    "zod": "^4.6.7"
+  },
+  "devDependencies": {
+    "@types/express": "^4.17.25",
+    "@types/node": "^26.6.5",
+    "@types/pg": "^8.23.1",
+    "tsx": "^4.23.15",
+    "typescript": "^7.0.2",
+    "vitest": "^5.0.5"
+  }
+}

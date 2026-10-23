@@ -1,0 +1,40 @@
+line_id,supplier_id,invoice_no,invoice_date,description,sku,quantity,unit,amount_aud,origin_country,manufacturer
+L0001,S001,CP-24811,2025-11-04,"Nitrile examination gloves, powder-free, size L (box of 100)",CP-GLV-NL,400,box,4960.00,Malaysia,Sunrise Glove Industries Sdn Bhd
+L0002,S001,CP-25190,2026-01-12,"Nitrile examination gloves, powder-free, size M (box of 100)",CP-GLV-NM,350,box,4340.00,Malaysia,Sunrise Glove Industries Sdn Bhd
+L0003,S001,CP-25702,2026-04-08,"Nitrile examination gloves, powder-free, size L (box of 100)",CP-GLV-NL,420,box,5208.00,Malaysia,Sunrise Glove Industries
+L0004,S001,CP-26355,2026-07-15,"Nitrile examination gloves, powder-free, size M (box of 100)",CP-GLV-NM,380,box,4712.00,Malaysia,Sunrise Glove Ind. Sdn. Bhd.
+L0005,S001,CP-24990,2025-12-02,Disposable PE aprons (roll of 200),CP-APR-200,120,roll,1680.00,,
+L0006,S001,CP-25488,2026-03-03,Antibacterial surface wipes (tub of 200),CP-WIP-200,300,tub,3150.00,Australia,BrightChem Manufacturing
+L0007,S001,CP-26012,2026-06-10,Heavy duty rubber kitchen gloves (pair),CP-GLV-HD,600,pair,1740.00,China,
+L0008,S002,CH-11820,2025-11-20,Toilet tissue 2-ply (carton of 48),CH-TT-48,260,carton,9880.00,Australia,Coastal Paper Mills
+L0009,S002,CH-12204,2026-02-17,Hand towel rolls (carton of 6),CH-HT-6,180,carton,6120.00,,
+L0010,S002,CH-12731,2026-05-21,Toilet tissue 2-ply (carton of 48),CH-TT-48,240,carton,9120.00,Australia,Coastal Paper Mills
+L0011,S002,CH-13266,2026-08-26,Hand towel rolls (carton of 6),CH-HT-6,200,carton,6800.00,,
+L0012,S003,PS-4410,2025-12-09,Microfibre cleaning cloths 40x40cm (pack of 10),PS-MF-40,900,pack,6300.00,China,Yiwu Bright Textile Co Ltd
+L0013,S003,PS-4588,2026-03-24,Microfibre flat mop pads,PS-MOP-FL,500,each,4250.00,China,Yiwu Bright Textile Co Ltd
+L0014,S003,PS-4790,2026-06-30,Cotton mop heads 400g,PS-MOP-C4,300,each,2550.00,China,
+L0015,S003,PS-4952,2026-09-08,Microfibre cleaning cloths 40x40cm (pack of 10),PS-MF-40,850,pack,5950.00,China,Yiwu Bright Textiles Co Ltd
+L0016,S004,UH-77120,2026-01-28,"Staff polo shirts, cotton/poly, embroidered",UH-POLO-E,180,each,6480.00,Bangladesh,Dhaka Apparel Works Ltd
+L0017,S004,UH-77121,2026-01-28,"Work trousers, poly/cotton",UH-TRS-PC,120,each,5400.00,Bangladesh,Dhaka Apparel Works Ltd
+L0018,S004,UH-78044,2026-07-02,Hi-vis safety vests,UH-HV-V,90,each,1215.00,China,
+L0019,S005,BC-3301,2025-11-11,Neutral floor cleaner concentrate 5L,BC-NFC-5,210,each,5250.00,Australia,BrightChem Manufacturing
+L0020,S005,BC-3417,2026-02-03,Bathroom descaler 5L,BC-BDS-5,160,each,4160.00,Australia,BrightChem Manufacturing
+L0021,S005,BC-3560,2026-05-05,Glass cleaner ready-to-use 750ml (carton of 12),BC-GLS-12,140,carton,3500.00,Australia,BrightChem Manufacturing
+L0022,S005,BC-3702,2026-08-18,Degreaser concentrate 20L (contains sodium hydroxide),BC-DGR-20,60,each,3900.00,Australia,BrightChem Manufacturing
+L0023,S006,NC-1102,2026-02-24,Ride-on floor scrubber with lithium-ion battery pack,NC-RS-LI,1,each,18900.00,Germany,NordicClean GmbH
+L0024,S006,NC-1103,2026-02-24,Commercial backpack vacuum (battery powered),NC-BPV-B,6,each,5340.00,China,
+L0025,S007,SS-901,2025-12-15,"Labour hire - casual cleaners, December peak (hours)",SS-LH-CL,620,hour,31620.00,Australia,
+L0026,S007,SS-955,2026-03-31,"Labour hire - casual cleaners, January to March (hours)",SS-LH-CL,480,hour,24480.00,Australia,
+L0027,S007,SS-1012,2026-06-30,"Labour hire - casual cleaners, April to June (hours)",SS-LH-CL,510,hour,26010.00,Australia,
+L0028,S007,SS-1068,2026-09-30,"Labour hire - casual cleaners, July to September (hours)",SS-LH-CL,450,hour,22950.00,Australia,
+L0029,S008,GB-2290,2026-01-07,Bin liners 82L heavy duty (carton of 250),GB-BL-82,150,carton,4350.00,China,
+L0030,S008,GB-2486,2026-06-16,Bin liners 240L for wheelie bins (carton of 100),GB-BL-240,90,carton,3060.00,China,
+L0031,S009,SC-5521,2026-04-14,Rooftop solar system 20kW at Alexandria depot (supply and install),SC-PV-20K,1,each,24800.00,China,Module brand not specified
+L0032,S010,MF-3021,2026-03-31,Van lease - 4x Toyota HiAce (January to June),MF-VAN-4,1,each,10800.00,Japan,Toyota
+L0033,S010,MF-3166,2026-09-30,Van lease - 4x Toyota HiAce (July to December),MF-VAN-4,1,each,10800.00,Japan,Toyota
+L0034,S011,DL-6610,2025-11-30,Printer paper A4 80gsm (carton of 5 reams),DL-A4-80,40,carton,1560.00,Australia,
+L0035,S011,DL-6872,2026-05-12,Toner cartridges (assorted),DL-TNR-AS,24,each,2640.00,,
+L0036,S012,TF-2208,2026-02-10,Supervisor smartphones,TF-PH-SV,8,each,7192.00,China,Contract manufacturer (unspecified)
+L0037,S012,TF-2209,2026-02-10,Laptops for administration staff,TF-LT-AD,4,each,6396.00,China,
+L0038,S012,TF-2477,2026-08-05,IT support retainer July to September,TF-SUP-Q3,1,each,4500.00,Australia,
+L0039,S013,AQ-140,2026-01-31,Water cooler rental - annual,AQ-WC-12,1,each,1980.00,Australia,

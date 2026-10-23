@@ -1,0 +1,12 @@
+node_modules/
+.data/
+.data-test/
+.env
+.env.local
+data/reference/fetched/
+*.log
+.DS_Store
+coverage/
+
+# Internal handoff notes for Claude Code
+CLAUDE.md

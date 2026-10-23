@@ -1,0 +1,52 @@
+# The three source systems that Zetaris federates for the demo company.
+#   rs-postgres  the ERP (supplier master, purchase lines, company registers)
+#   rs-minio     object storage holding the reference lists as CSV files
+#   rs-portal    the supplier declaration portal, a JSON REST endpoint
+# Ports bind to 127.0.0.1 only. Zetaris, running in Docker Desktop, reaches
+# them at host.docker.internal (see docs/SETUP.md for the alternatives).
+name: reasonable-steps
+
+services:
+  postgres:
+    image: postgres:16.4-alpine
+    container_name: rs-postgres
+    environment:
+      POSTGRES_DB: ${PGDATABASE:-rs_erp}
+      POSTGRES_USER: ${PGUSER:-rs}
+      POSTGRES_PASSWORD: ${PGPASSWORD:-rs_local_dev}
+    ports:
+      - "127.0.0.1:${PGPORT:-5433}:5432"
+    volumes:
+      - rs-pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${PGUSER:-rs} -d ${PGDATABASE:-rs_erp}"]
+      interval: 5s
+      timeout: 3s
+      retries: 20
+
+  minio:
+    # MinIO stopped publishing community images in October 2025. This is the
+    # last tag known to be pullable. Any S3-compatible store works instead.
+    image: quay.io/minio/minio:RELEASE.2025-06-13T11-33-47Z
+    container_name: rs-minio
+    command: server /data --console-address ":9001"
+    environment:
+      MINIO_ROOT_USER: ${MINIO_ACCESS_KEY:-rsminio}
+      MINIO_ROOT_PASSWORD: ${MINIO_SECRET_KEY:-rsminio-local-dev}
+    ports:
+      - "127.0.0.1:9000:9000"
+      - "127.0.0.1:9001:9001"
+    volumes:
+      - rs-miniodata:/data
+
+  portal:
+    image: nginx:1.27-alpine
+    container_name: rs-portal
+    volumes:
+      - ./data/demo/declarations.json:/usr/share/nginx/html/api/declarations.json:ro
+    ports:
+      - "127.0.0.1:8099:80"
+
+volumes:
+  rs-pgdata:
+  rs-miniodata:
