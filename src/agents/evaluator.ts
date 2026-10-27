@@ -173,27 +173,31 @@ export async function evaluateDrafts(ctx: RunContext, questions: Question[], dra
       .filter((t) => TOOLS.some((x) => x.name === t.tool))
       .map((t) => ({ tool: t.tool as ToolName, params: normalizeParams(t.tool as ToolName, t.params ?? {}), reason: t.reason ?? "Requested by the evaluator model", forQuestions: [q.id], requestedBy: "evaluator" as const }))
       .filter((t) => !toolRan(ctx, t.tool, (p) => JSON.stringify(normalizeParams(t.tool, p)) === JSON.stringify(t.params)));
-    const modelIssues: Issue[] = meta.provider === "nightshift"
+    // A rewrite request with no new evidence can't change a template draft, and on the last
+    // iteration nothing can, so then the model's points stay as notes instead of blocking.
+    const canRedraft = !isLast && ctx.llm.modelFor("drafter") !== "policy";
+    const overruled = meta.provider === "nightshift" && gateVerdict === "approve" && value.verdict === "revise" && !modelTools.length && !canRedraft;
+    const modelIssues: Issue[] = meta.provider === "nightshift" && !overruled
       ? value.issues.filter((i) => !g.issues.some((x) => x.detail === i)).map((i) => ({ gate: "model_review", blocking: value.verdict === "revise", detail: i }))
       : [];
 
     let verdict: Verdict["verdict"] = gateVerdict;
     if (gateVerdict === "approve" && meta.provider === "nightshift") {
-      if (value.verdict === "revise" && (modelTools.length || !isLast)) verdict = "revise";
+      if (value.verdict === "revise" && !overruled) verdict = "revise";
       if (value.verdict === "escalate") verdict = "escalate";
     }
     if (gateVerdict === "escalate" && value.verdict === "revise" && modelTools.length) verdict = "revise";
     if (verdict === "revise" && isLast) verdict = "escalate";
 
     const notes = [...g.notes];
-    if (meta.provider === "nightshift" && value.verdict === "revise" && verdict === "approve") notes.push(`Model suggestions not applied on the final iteration: ${value.issues.join(" ")}`);
+    if (overruled) notes.push(...value.issues.map((i) => `Reviewer note: ${i}`));
 
     const issues = [...g.issues, ...modelIssues];
     const result: Verdict = {
       questionId: q.id, iteration: ctx.trace.iteration, verdict, issues,
       requestedTools: [...g.requested, ...modelTools],
       notes, reviewer: { model: meta.model, provider: meta.provider },
-      summary: value.summary,
+      summary: overruled ? "Every gate passed. The reviewer's points below need no new evidence, so they are notes for you rather than a rewrite." : value.summary,
     };
     ctx.state.verdicts.set(q.id, [...(ctx.state.verdicts.get(q.id) ?? []), result]);
 
@@ -220,7 +224,7 @@ export async function evaluateDrafts(ctx: RunContext, questions: Question[], dra
     }
 
     ctx.trace.log("evaluator", "verdict", `${q.id}: ${verdict.toUpperCase()}`, {
-      detail: verdict === "approve" ? value.summary : [...issues.map((i) => `[${i.gate}] ${i.detail}`), ...g.escalate.map((e) => `[${e.type}] ${e.detail}`)].join(" | "),
+      detail: verdict === "approve" ? result.summary : [...issues.map((i) => `[${i.gate}] ${i.detail}`), ...g.escalate.map((e) => `[${e.type}] ${e.detail}`)].join(" | "),
       data: { questionId: q.id, verdict, gateVerdict, modelVerdict: value.verdict, reviewer: meta.model, requestedTools: result.requestedTools.map((t) => ({ tool: t.tool, params: t.params })), notes },
     });
     return result;

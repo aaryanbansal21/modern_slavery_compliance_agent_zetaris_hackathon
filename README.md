@@ -19,7 +19,7 @@ Reasonable Steps reads the business's own systems and the public risk lists, che
 - **Federated data through Zetaris.** The ERP (PostgreSQL), the supplier declaration portal (a REST API) and the reference lists (CSV files in S3-compatible storage) are joined in single queries. Only the answer rows reach the agents.
 - **A planner, executor, drafter and evaluator loop.** The evaluator sends back drafts that the evidence does not support, and requests the checks that would support them. The planner runs those checks and the drafter tries again.
 - **Shared state in the Meterless World Model.** Suppliers, manufacturers, purchase lines, declarations, evidence, findings and answers live in an event-sourced graph with provenance on every write. It persists between runs, so decisions a person makes (an identity link, approved wording) carry forward.
-- **Models through Meterless Nightshift.** Each agent role has its own route. The evaluator runs on an NVIDIA Nemotron route, a different model family from the drafter, so no answer is graded by the model that wrote it.
+- **NVIDIA Nemotron does the judging.** Nemotron plans the checks, classifies purchase lines the product taxonomy misses, reviews identity links and reviews every draft. The drafter writes from tested templates, so every sentence traces to evidence and no answer is graded by the model that wrote it.
 - **Answers you can check.** Every claim cites evidence, every evidence item cites the Zetaris queries that produced it, and every query is kept with its SQL.
 
 ### What happens in a run
@@ -56,7 +56,7 @@ With the demo data, iteration 1 runs the cheap tier 1 checks and drafts all 10 a
 | Classifier | Maps purchase lines the product taxonomy misses to listed goods | `MODEL_CLASSIFIER` |
 | Adjudicator | Reviews sanctions name alerts against identifiers | `MODEL_EVALUATOR` |
 | Risk scorer | Transparent rubric over findings, with cited evidence | none (rules) |
-| Drafter | Writes answers from evidence, citing it after every claim | `MODEL_DRAFTER` |
+| Drafter | Writes answers from evidence, citing it after every claim | `MODEL_DRAFTER` (templates in the demo) |
 | Evaluator | Deterministic evidence gates, then model review | `MODEL_EVALUATOR` (Nemotron) |
 
 | Tool | Tier | Sources joined in Zetaris |
@@ -90,9 +90,9 @@ Every draft passes these before the model reviews it. The model can add issues b
 
 **Meterless World Model** is implemented in `src/engines/world-model/` from the Meterless specification and passes the official conformance suite (`npm run conformance`, 8 of 8). It is the shared state between agents: stable content-addressed IDs, idempotent ingest, provenance on every write, bitemporal relationships, facts with a conflict policy, an ordered audit log, a human review queue for merges, and rebuildable views. The app's World Model tab is the operator control plane.
 
-**Meterless Nightshift** is the AI provider. `src/llm/nightshift.ts` follows the Meterless Runtime provider contract 0.90.0: URL normalization, bearer token from `<stateDir>/proxy-token`, `meterless-app` and `meterless-scope` headers, routing-mode model IDs, status from `/v1/models`, Auto Detect, and a 180 second timeout.
+**NVIDIA Nemotron** answers every model call in the demo, through NVIDIA's API. Nemotron 3 Ultra plans, reviews each draft and adjudicates sanctions alerts. Nemotron 3.5 Bolt parses the questionnaire, classifies purchase lines and reviews identity links. `npm run nightshift:check` tests each role's model.
 
-**NVIDIA Nemotron** runs the evaluator and the sanctions adjudicator through Nightshift, as an independent judge of drafts written by a different model. `npm run nightshift:check` lists the routes your Nightshift offers and tests each role.
+The model client in `src/llm/nightshift.ts` was written to the Meterless Runtime provider contract 0.90.0, so it can also point at a local Meterless Nightshift. The demo uses NVIDIA's API because the free Mac edition of Nightshift runs only small local models.
 
 See [docs/SPONSOR_TECH.md](docs/SPONSOR_TECH.md) for the full explanation for the submission form.
 
@@ -108,7 +108,7 @@ npm run demo             # one assessment in the terminal
 npm start                # the app at http://localhost:4180
 ```
 
-## Full setup (Zetaris and Nightshift)
+## Full setup (Zetaris and Nemotron)
 
 See [docs/SETUP.md](docs/SETUP.md). In short:
 
@@ -119,8 +119,8 @@ npm run seed:postgres
 npm run upload:minio
 npm run zetaris:setup                # registers all three systems in Zetaris
 npm run zetaris:verify               # checks every table and every agent query
-npm run nightshift:check             # checks every model route
-# then set DATA_MODE=zetaris and AI_MODE=nightshift in .env
+npm run nightshift:check             # checks the model for every agent role
+# then set DATA_MODE=zetaris and AI_MODE=nightshift (model calls on) in .env
 npm start
 ```
 
@@ -141,11 +141,11 @@ src/
   agents/          orchestrator, planner, tools, resolver, risk, drafter, evaluator, prompts
   data/            Zetaris client, offline stand-in, query library, schema, setup SQL
   engines/world-model/   Meterless World Model engine
-  llm/             Nightshift client and model router
+  llm/             OpenAI-compatible model client and router
   reporting/       Word, Excel and Markdown outputs
   server.ts        API and web app
 web/               the app (plain HTML, CSS and JavaScript)
-scripts/           data prep, seeding, Zetaris setup and verify, Nightshift check, demo CLI
+scripts/           data prep, seeding, Zetaris setup and verify, model check, demo CLI
 data/demo/         fictional company: ERP extracts, portal declarations, client questionnaire
 data/reference/    product taxonomy, sector list, DOL excerpt, sanctions test fixture
 test/              unit, conformance, model path and end-to-end tests

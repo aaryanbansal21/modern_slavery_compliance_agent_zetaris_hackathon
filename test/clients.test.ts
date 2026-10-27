@@ -1,4 +1,4 @@
-import { describe, expect, it } from "vitest";
+import { describe, expect, it, vi } from "vitest";
 import { normalizeZetarisResult, ZetarisSource } from "../src/data/zetaris.ts";
 import { extractJson } from "../src/llm/json.ts";
 import { NightshiftClient, normalizeBaseUrl } from "../src/llm/nightshift.ts";
@@ -31,6 +31,19 @@ describe("Zetaris client", () => {
     expect(headers["X-Request-ID"]).toMatch(/^[0-9a-f-]{36}$/);
     expect(JSON.parse(String(q.init.body))).toEqual({ sql: "SELECT 1 AS one", limit: 100 });
   });
+
+  it("waits out a Spark restart and retries, but fails fast on other query errors", async () => {
+    vi.useFakeTimers();
+    let n = 0;
+    const fake = (async () => (++n === 1 ? json({ msg: "org.apache.thrift.transport.TTransportException" }, 400) : json({ data: [{ one: 1 }] }))) as unknown as typeof fetch;
+    const cfg = { baseUrl: "http://localhost:3000", orgId: "42", apiKey: "k", username: "", password: "", engineId: "", queryLimit: 100, timeoutMs: 5000, sourceHost: "" };
+    const pending = new ZetarisSource(cfg, fake).query("SELECT 1 AS one");
+    await vi.advanceTimersByTimeAsync(45_000);
+    expect((await pending).rows).toEqual([{ one: 1 }]);
+    vi.useRealTimers();
+    const bad = (async () => json({ msg: "AnalysisException: Table not found" }, 400)) as unknown as typeof fetch;
+    await expect(new ZetarisSource(cfg, bad).query("SELECT 1")).rejects.toThrow(/Table not found/);
+  });
 });
 
 describe("Nightshift client (Meterless provider contract)", () => {
@@ -49,8 +62,10 @@ describe("Nightshift client (Meterless provider contract)", () => {
 
   it("sends the app and scope headers and reports which model answered", async () => {
     let headers: Record<string, string> = {};
+    let body: unknown;
     const fake = (async (_url: string, init: RequestInit) => {
       headers = init.headers as Record<string, string>;
+      body = init.body;
       return json({ model: "nvidia/nemotron-test", choices: [{ message: { content: "<think>hmm</think>```json\n{\"ok\": true}\n```" } }] });
     }) as unknown as typeof fetch;
     const c = new NightshiftClient("http://127.0.0.1:8088", "tok", "slavery-compliance-agent", 5000, fake);
@@ -59,6 +74,7 @@ describe("Nightshift client (Meterless provider contract)", () => {
     expect(headers["meterless-scope"]).toBe("user");
     expect(headers.Authorization).toBe("Bearer tok");
     expect(r.model).toBe("nvidia/nemotron-test");
+    expect(JSON.parse(String(body)).chat_template_kwargs).toEqual({ enable_thinking: false });
     expect(extractJson(r.text)).toEqual({ ok: true });
   });
 });

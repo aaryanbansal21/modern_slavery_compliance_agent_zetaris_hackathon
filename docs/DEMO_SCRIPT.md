@@ -18,7 +18,7 @@ Say: "Reasonable Steps reads Harbourside's real systems through Zetaris: the ERP
 
 Screen: press "Check suppliers and draft answers". The Agent trace tab streams.
 
-Say: "The planner starts proportionately, with cheap checks for a first draft. Watch the evaluator, running on NVIDIA Nemotron through Meterless Nightshift. It sends four drafts back. Question 3 said we have no high-risk goods, but no purchase line had been checked. The planner reacts: it resolves supplier identities, screens all 39 purchase lines by product and country of origin, checks inputs named in supplier declarations, and widens the sanctions screen to manufacturers and parent companies."
+Say: "The planner starts proportionately, with cheap checks for a first draft. Watch the evaluator, running on NVIDIA Nemotron. It sends five drafts back, one of them on its own judgement. Question 3 said we have no high-risk goods, but no purchase line had been checked. The planner reacts: it resolves supplier identities, screens all 39 purchase lines by product and country of origin, checks inputs named in supplier declarations, and widens the sanctions screen to manufacturers and parent companies."
 
 Point at: a red "REVISE" verdict, then a federated query row (click Show SQL once).
 
@@ -52,4 +52,4 @@ Say: "Run again, and all ten answers are ready, with a risk register, an action 
 
 Screen: README architecture diagram or the title slide.
 
-Say: "Reasonable Steps. Zetaris for the data, the Meterless World Model for shared state, Nightshift and Nemotron for the reasoning. Built so small suppliers can show their reasonable steps."
+Say: "Reasonable Steps. Zetaris for the data, the Meterless World Model for shared state, Nemotron for the judgement. Built so small suppliers can show their reasonable steps."

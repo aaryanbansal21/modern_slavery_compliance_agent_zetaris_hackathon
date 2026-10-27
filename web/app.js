@@ -75,7 +75,7 @@ function renderHeader() {
   const evaluator = s.roles?.evaluator ?? "";
   $("#stack-status").innerHTML = `
     <span class="sys"><span class="dot ${dataOk ? "ok" : "bad"}"></span>${s.data.mode === "zetaris" ? "Zetaris data layer" : "Offline data (DuckDB)"}</span>
-    <span class="sys"><span class="dot ${aiState}"></span>${aiMode === "mock" ? "AI offline (rule policies)" : `Nightshift ${esc(s.ai.state)}`}</span>
+    <span class="sys"><span class="dot ${aiState}"></span>${aiMode === "mock" ? "AI offline (rule policies)" : `${esc(s.ai.label ?? "Models")} ${esc(s.ai.state)}`}</span>
     ${aiMode === "nightshift" ? `<span class="sys"><span class="dot ${aiState}"></span>Evaluator: ${esc(evaluator)}</span>` : ""}
     <span class="sys"><span class="dot ok"></span>World Model: ${s.world.events} events</span>`;
   const n = openEscalations().length;
@@ -409,7 +409,7 @@ function renderTrace() {
   const verdicts = events.filter((e) => e.type === "verdict");
   el.innerHTML = `
     <div class="view-head"><div><h1>Agent trace</h1>
-      <p>${events.length} events: ${queries} federated queries, ${modelCalls} model calls through Nightshift${policyCalls ? `, ${policyCalls} rule-based decisions` : ""}, ${verdicts.length} evaluator verdicts (${verdicts.filter((v) => v.data?.verdict === "revise").length} sent back).</p></div>
+      <p>${events.length} events: ${queries} federated queries, ${modelCalls} model calls${state.status?.ai?.label ? ` through ${esc(state.status.ai.label)}` : ""}${policyCalls ? `, ${policyCalls} rule-based decisions` : ""}, ${verdicts.length} evaluator verdicts (${verdicts.filter((v) => v.data?.verdict === "revise").length} sent back).</p></div>
       ${state.run.id ? `<div class="actions-row"><a class="btn" href="/api/runs/${state.run.id}/files/trace.jsonl">Download trace</a></div>` : ""}
     </div>
     ${state.run.live ? `<div class="live-banner"><span class="pulse" aria-hidden="true"></span>Running. Events appear as the agents work.</div>` : ""}
@@ -552,11 +552,11 @@ function renderSources() {
       </div>
       <div>
         <div class="panel">
-          <h2>AI: ${s.ai.mode === "mock" ? "offline rule policies" : "Meterless Nightshift"}</h2>
+          <h2>AI: ${s.ai.mode === "mock" ? "offline rule policies" : esc(s.ai.label ?? "models")}</h2>
           <p class="flow">${s.ai.mode === "mock" ? "AI_MODE=mock. Each agent runs its deterministic policy. Set AI_MODE=nightshift to use models." : `${esc(s.ai.baseUrl)}: ${esc(s.ai.state)}. ${esc(s.ai.detail ?? "")}`}</p>
           <table class="audit"><tbody>${roles.map(([role, model]) => `<tr><td>${esc(role)}</td><td><b>${esc(model)}</b></td></tr>`).join("")}</tbody></table>
           ${Object.keys(answered).length ? `<h3 class="small" style="margin:14px 0 6px">Models that answered in the last run</h3><table class="audit"><tbody>${Object.entries(answered).map(([m, n]) => `<tr><td>${esc(m)}</td><td class="num">${n} calls</td></tr>`).join("")}</tbody></table>` : ""}
-          ${(s.ai.models ?? []).length ? `<h3 class="small" style="margin:14px 0 6px">Routes Nightshift offers</h3><p class="small">${s.ai.models.map(esc).join(", ")}</p>` : ""}
+          ${(s.ai.models ?? []).length ? `<h3 class="small" style="margin:14px 0 6px">${s.ai.label === "NVIDIA API" ? "Nemotron models available" : "Routes Nightshift offers"}</h3><p class="small">${s.ai.models.map(esc).join(", ")}</p>` : ""}
         </div>
         ${sum ? `<div class="panel"><h2>Last run</h2><dl class="kv">
           <dt>Run</dt><dd>${esc(sum.runId)}</dd><dt>Iterations</dt><dd>${sum.iterations}</dd>

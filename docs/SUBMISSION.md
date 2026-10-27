@@ -8,8 +8,8 @@
 | Sponsor technology explanation | docs/SPONSOR_TECH.md |
 | Meterless Engine test | `npm run conformance` (official suite, 8 of 8) and test/world-model.test.ts |
 | Zetaris as the data layer | src/data/zetaris.ts, src/data/zetarisSetup.ts, `npm run zetaris:verify` |
-| Nightshift as the primary AI provider | src/llm/nightshift.ts, src/llm/router.ts, `npm run nightshift:check` |
-| NVIDIA | Nemotron route for the evaluator and adjudicator (`MODEL_EVALUATOR`) |
+| Meterless integration | The World Model engine in src/engines/world-model/, used for identity resolution, approvals and risk history |
+| NVIDIA | Nemotron through NVIDIA's API for every model role (src/llm/nightshift.ts, src/llm/router.ts, `npm run nightshift:check`) |
 | No committed secrets | `.env` is gitignored; `.env.example` has placeholders only |
 
 ## Track
@@ -31,7 +31,7 @@ Paste into the form:
 5. **How the agents work.** The flowchart from the README: planner, executor over Zetaris, risk scorer, drafter, evaluator, with the revise and escalate loops.
 6. **Explain why.** Screenshot of "How this answer changed" for question 3: the struck-through first draft, the evaluator's reasons, the final answer.
 7. **Fragmented data, joined.** The three systems, the Zetaris objects, and one federated query. Call out the NordicClean catch: invoice says Germany, declaration says China battery cells.
-8. **Sponsor technology.** Zetaris (federation and the evidence chain), Meterless World Model (shared state, merge bands, fact history, conformance 8 of 8), Nightshift (provider contract, per-role routes), NVIDIA Nemotron (independent evaluator and adjudicator).
+8. **Sponsor technology.** Zetaris (federation and the evidence chain), Meterless World Model (shared state, merge bands, fact history, conformance 8 of 8), NVIDIA Nemotron (planner, evaluator and adjudicator, reviewing drafts it did not write).
 9. **People stay in charge.** Needs you tab: owner sign-off, identity review. World Model remembers the decision.
-10. **Results on the demo data.** 10 questions, 39 purchase lines, 3 systems, 2 iterations, 4 drafts sent back, 4 high-risk and 3 medium-risk suppliers, 2 decisions for a person, 10 of 10 ready after review.
+10. **Results on the demo data.** 10 questions, 39 purchase lines, 3 systems, 2 iterations, 5 drafts sent back, 4 high-risk and 3 medium-risk suppliers, 2 decisions for a person, 10 of 10 ready after review.
 11. **What is next.** Accounting connectors (Xero, MYOB) in place of the demo ERP; more reference lists (OpenSanctions, Anti-Slavery Commissioner declarations when published); supplier-facing follow-up requests; quarterly re-checks that report what changed.

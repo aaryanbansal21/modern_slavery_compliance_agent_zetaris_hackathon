@@ -118,11 +118,13 @@ export class LlmRouter {
   ): Promise<{ value: T; meta: CallMeta }> {
     const requestedModel = this.modelFor(role);
     const agent = ROLE_AGENT[role];
-    this.stats.byRole[role] = this.offline ? "policy" : requestedModel;
+    // MODEL_<ROLE>=policy keeps one role on its deterministic policy while the others call models.
+    const usePolicy = this.offline || !this.client || requestedModel === "policy";
+    this.stats.byRole[role] = usePolicy ? "policy" : requestedModel;
 
-    if (this.offline || !this.client) {
+    if (usePolicy) {
       const value = policy();
-      const meta: CallMeta = { role, provider: "policy", requestedModel, model: "deterministic policy", latencyMs: 0, cached: false, fallback: false, reason: "AI_MODE=mock" };
+      const meta: CallMeta = { role, provider: "policy", requestedModel, model: "deterministic policy", latencyMs: 0, cached: false, fallback: false, reason: this.offline ? "AI_MODE=mock" : `route for ${role} set to policy` };
       this.trace?.log(agent, "llm", `${task} (deterministic policy)`, { data: { ...meta } });
       return { value, meta };
     }

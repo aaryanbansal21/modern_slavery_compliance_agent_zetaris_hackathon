@@ -14,6 +14,12 @@ export default defineConfig({
       ASSESSMENT_DATE: "2026-10-23",
       LLM_CACHE: "off",
       WORLD_NAMESPACE: "test",
+      // Pinned so routes set in .env don't leak into the model path test.
+      MODEL_PLANNER: "meterless/auto",
+      MODEL_PARSER: "meterless/fast",
+      MODEL_CLASSIFIER: "meterless/fast",
+      MODEL_DRAFTER: "meterless/auto",
+      MODEL_EVALUATOR: "meterless/deep",
     },
   },
 });

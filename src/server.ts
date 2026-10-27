@@ -13,7 +13,7 @@ import { ids, openWorld, recordApproval } from "./agents/world.ts";
 import { openDataSource } from "./data/federated.ts";
 import { DEMO_DIR, prepareData, readManifest } from "./data/prepare.ts";
 import { TABLES, tableRef } from "./data/schema.ts";
-import { NightshiftClient, resolveToken } from "./llm/nightshift.ts";
+import { NightshiftClient, providerLabel, resolveToken } from "./llm/nightshift.ts";
 import { writeOutputs } from "./reporting/outputs.ts";
 import type { TraceEvent } from "./trace/trace.ts";
 
@@ -45,7 +45,10 @@ async function nightshiftStatus() {
   const { token, from } = resolveToken(config.nightshift.token, config.nightshift.tokenFile);
   const client = new NightshiftClient(config.nightshift.baseUrl, token, config.nightshift.appId, 8_000);
   const s = await client.status();
-  return { mode: "nightshift", baseUrl: client.baseUrl, tokenFrom: from ?? "not found", ...s };
+  const label = providerLabel(client.baseUrl);
+  // NVIDIA lists 80+ models; only the Nemotron ones matter here.
+  const models = label === "NVIDIA API" ? s.models.filter((m) => /nemotron/i.test(m)) : s.models;
+  return { mode: "nightshift", label, baseUrl: client.baseUrl, tokenFrom: from ?? "not found", ...s, models };
 }
 
 app.get("/api/status", async (_req, res) => {

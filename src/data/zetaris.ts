@@ -23,6 +23,8 @@ export class ZetarisError extends Error {
 
 type ZetarisConfig = Config["zetaris"];
 
+const SPARK_RESTART = /TTransportException|Could not create ResultSet/;
+
 export class ZetarisSource implements DataSource {
   readonly mode = "zetaris" as const;
   readonly label: string;
@@ -90,7 +92,9 @@ export class ZetarisSource implements DataSource {
       const detail = type.includes("text/html")
         ? "The server returned an HTML page. ZETARIS_BASE_URL must be the UI origin (port 3000 locally)."
         : (await res.text()).slice(0, 600);
-      throw new ZetarisError(`${method} ${pathname} failed: HTTP ${res.status} ${detail}`, res.status, [429, 502, 503, 504].includes(res.status));
+      // Spark on a small cluster sometimes drops a query and restarts its SQL server (about 90 s).
+      const sparkRestart = SPARK_RESTART.test(detail);
+      throw new ZetarisError(`${method} ${pathname} failed: HTTP ${res.status} ${detail}`, res.status, sparkRestart || [429, 502, 503, 504].includes(res.status));
     }
     return res.status === 204 ? null : res.json();
   }
@@ -108,7 +112,8 @@ export class ZetarisSource implements DataSource {
       } catch (err) {
         lastErr = err;
         if (!(err instanceof ZetarisError) || !err.retryable) break;
-        await new Promise((r) => setTimeout(r, err.status === 429 ? 15_000 : 1_500 * (attempt + 1)));
+        const wait = SPARK_RESTART.test(err.message) ? 45_000 * (attempt + 1) : err.status === 429 ? 15_000 : 1_500 * (attempt + 1);
+        await new Promise((r) => setTimeout(r, wait));
       }
     }
     throw lastErr;

@@ -9,6 +9,8 @@ import {
 } from "docx";
 import ExcelJS from "exceljs";
 import { runsDir } from "../agents/orchestrator.ts";
+import { config } from "../config.ts";
+import { providerLabel } from "../llm/nightshift.ts";
 import type { RunSummary } from "../agents/types.ts";
 
 const STATUS_LABEL: Record<string, string> = {
@@ -170,8 +172,8 @@ export function evidencePack(s: RunSummary): string {
   const out: string[] = [];
   out.push(`# Evidence pack: ${s.questionnaireTitle}`, "");
   out.push(`Company: ${s.company}  `, `Client: ${s.client}  `, `Run: ${s.runId} (${s.startedAt} to ${s.finishedAt})  `,
-    `Data layer: ${s.dataMode === "zetaris" ? "Zetaris (federated: PostgreSQL ERP, MinIO reference files, REST supplier portal)" : "Local DuckDB stand-in (offline mode)"}  `,
-    `AI: ${s.aiMode === "nightshift" ? "Meterless Nightshift" : "Deterministic policies (offline mode)"}  `,
+    `Data layer: ${s.dataMode === "zetaris" ? "Zetaris (federated: PostgreSQL ERP, reference lists in object storage, REST supplier portal)" : "Local DuckDB stand-in (offline mode)"}  `,
+    `AI: ${s.aiMode === "nightshift" ? `${providerLabel(config.nightshift.baseUrl)} (${Object.keys(s.llmStats.byModel).join(", ")})` : "Deterministic policies (offline mode)"}  `,
     `Iterations: ${s.iterations}. Queries: ${s.queries.length}. Evidence items: ${s.evidence.length}.`, "");
   out.push("## Coverage", "",
     `- Period: ${s.coverage.periodFrom} to ${s.coverage.periodTo}`,

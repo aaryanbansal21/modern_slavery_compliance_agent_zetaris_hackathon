@@ -114,6 +114,9 @@ export class NightshiftClient {
         temperature: opts.temperature ?? 0.2,
         max_tokens: opts.maxTokens ?? 1800,
         stream: false,
+        // Nemotron 3 reasoning models otherwise spend the whole token budget thinking and
+        // return no answer. OpenAI-compatible servers ignore the field on models without it.
+        chat_template_kwargs: { enable_thinking: false },
       }),
       signal: AbortSignal.timeout(this.timeoutMs),
     });
@@ -132,6 +135,9 @@ export class NightshiftClient {
     return { text, model: body.model ?? model, usage: body.usage, latencyMs: Math.round(performance.now() - t0) };
   }
 }
+
+/** The same OpenAI-compatible client serves Nightshift or NVIDIA's API directly; name the one in use. */
+export const providerLabel = (baseUrl: string) => (/\.nvidia\.com/i.test(baseUrl) ? "NVIDIA API" : "Meterless Nightshift");
 
 /** Auto Detect per the provider contract: first online or unauthorized hit wins. */
 export async function autoDetect(appId: string, token?: string): Promise<{ baseUrl: string; state: ProviderState } | undefined> {

@@ -5,14 +5,14 @@ Two ways to run Reasonable Steps:
 | Mode | What runs | Use it for |
 |---|---|---|
 | Offline | Embedded DuckDB copy of the tables, deterministic agent policies | Development, tests, a demo without Zetaris or models |
-| Full | Zetaris federating PostgreSQL, MinIO and the REST portal; models through Meterless Nightshift with NVIDIA | The demo video and the submission |
+| Full | Zetaris federating PostgreSQL, object storage and the REST portal; NVIDIA Nemotron for the model roles | The demo video and the submission |
 
 ## Prerequisites
 
 - Node.js 20 or later (`node --version`)
 - Docker Desktop, with at least 8 GB of memory available to Docker for Zetaris (Settings, Resources)
 - A Zetaris Cloud account for the platform download
-- Meterless Nightshift (the free Mac M1+ edition gives a local endpoint for apps), and an NVIDIA API key from build.nvidia.com
+- An NVIDIA API key from build.nvidia.com
 
 ## 1. Offline mode
 
@@ -75,18 +75,21 @@ The setup registers:
 
 When `zetaris:verify` is clean, set `DATA_MODE=zetaris` in `.env`.
 
-## 5. Connect Meterless Nightshift and NVIDIA
+## 5. Connect NVIDIA Nemotron
 
-1. Install Nightshift and start it. The app's provider endpoint is `http://127.0.0.1:8088/v1` by default.
-2. In Nightshift's Providers tab, add your NVIDIA API key, so NVIDIA models (Nemotron) become available as routes.
-3. Copy the runtime token from `<stateDir>/proxy-token` into `METERLESS_RUNTIME_TOKEN` (or set `METERLESS_TOKEN_FILE` to that file).
-4. Run:
+1. Create an API key at build.nvidia.com. It starts with `nvapi-`.
+2. In `.env`, set `METERLESS_BASE_URL=https://integrate.api.nvidia.com/v1` and put the key in `METERLESS_RUNTIME_TOKEN`. The model routes in `.env.example` are the ones the demo uses.
+3. Run:
 
 ```bash
-npm run nightshift:check -- --detect
+npm run nightshift:check
 ```
 
-It lists the routes Nightshift offers, marks the NVIDIA ones, and sends a short test request for each agent role. Set `MODEL_EVALUATOR` to the Nemotron route it shows. Then set `AI_MODE=nightshift` and start the app.
+It sends a short test request for each agent role and reports which model answered. Then set `AI_MODE=nightshift` and start the app.
+
+Some models in NVIDIA's list return 404 for a free account. Run the check after changing a route.
+
+The client follows the Meterless Runtime provider contract, so a local Meterless Nightshift also works: set `METERLESS_BASE_URL` to its endpoint (`http://127.0.0.1:8088/v1` by default), put the token from `<stateDir>/proxy-token` in `METERLESS_RUNTIME_TOKEN`, and run `npm run nightshift:check -- --detect`.
 
 Model replies are cached in `.data/llm-cache` so a repeat run (for example a second take of the demo video) is fast. Set `LLM_CACHE=off` for a fully fresh run.
 
@@ -121,7 +124,7 @@ PORTAL_URL=http://rs-portal/api/declarations.json
 
 **HTTP 404 or an HTML page from Zetaris.** `ZETARIS_BASE_URL` must be the UI origin without a path.
 
-**Nightshift shows unauthorized.** The token is wrong or missing. Nightshift rejects the placeholder `rt-local`.
+**The model provider shows unauthorized.** The key or token is wrong or missing. Nightshift also rejects the placeholder `rt-local`.
 
 **Zetaris on AWS.** A cluster in AWS cannot see your laptop. Put the sources where it can reach them. Create the S3 bucket yourself in the S3 console, in the cluster's region (the Zetaris guide recommends `us-west-1`), because the upload script would otherwise create it in `us-east-1`. The portal URL works once the repo is public and pushed.
 

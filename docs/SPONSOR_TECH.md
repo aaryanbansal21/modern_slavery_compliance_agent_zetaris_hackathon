@@ -40,24 +40,24 @@ The control plane is the World Model tab in the app: entity browser with facts a
 
 The test showing it works: `npm run conformance` runs the official Meterless World Model conformance suite (copied unchanged from the Meterless repo, apart from the path to this implementation). Result: 8 of 8 checks pass (stable IDs, merge band boundaries, provenance enforcement, ingest idempotency in both directions, bitemporal supersession, audit ordering). `test/world-model.test.ts` adds tests for the review queue, superseded facts, replay and no-op writes, and `test/e2e.test.ts` shows decisions persisting across two runs.
 
-## How the app connects to Meterless Nightshift
-
-`src/llm/nightshift.ts` implements the Meterless Runtime provider contract 0.90.0: it normalizes any pasted URL to `<host>/v1` (never `/v1/v1`), sends `Authorization: Bearer` with the runtime token from `<stateDir>/proxy-token`, sends `meterless-app: slavery-compliance-agent` on every request and `meterless-scope: user` on chat, uses routing-mode model IDs, decides status from `GET /v1/models` (401 or 403 is unauthorized, not offline), supports Auto Detect on ports 8088, 8090, 8787 and 11434, and uses a 180 second timeout.
-
-Nightshift is the only AI provider. Each agent role has its own route (`MODEL_PLANNER`, `MODEL_PARSER`, `MODEL_CLASSIFIER`, `MODEL_DRAFTER`, `MODEL_EVALUATOR`). Every call is logged in the trace with the role, the requested route, the model that actually answered and the latency. Model output is validated against a schema; invalid output gets one repair attempt and then the role's deterministic policy takes over, with a warning in the trace, so a model failure never breaks a run. `npm run nightshift:check` lists the routes Nightshift offers and tests each role.
-
 ## Where NVIDIA technology contributes
 
-NVIDIA Nemotron, connected in Nightshift's Providers tab, runs the two judging roles:
+NVIDIA Nemotron answers every model call in the demo, through NVIDIA's OpenAI-compatible API. Each agent role has its own model setting:
 
-- the **evaluator**, which reviews every drafted answer after the deterministic gates
-- the **adjudicator**, which reviews sanctions name alerts against identifiers (entity type, country, registration)
+- Nemotron 3 Ultra runs the planner, the evaluator and the sanctions adjudicator. The evaluator reviews every drafted answer after the deterministic gates, and the adjudicator reviews sanctions name alerts against identifiers such as entity type and country.
+- Nemotron 3.5 Bolt, a small fast model, parses the questionnaire, classifies purchase lines the product taxonomy misses and reviews identity links between the supplier portal and the ERP.
 
-The drafter writes on a different route. Using a different model family to judge the drafts means no answer is graded by the model that wrote it, which is the failure mode a self-checking agent is most prone to. The evaluator can also request tools, so Nemotron's review can send the planner back for more evidence.
+The drafter writes from tested templates, so every sentence traces to evidence and no answer is graded by the model that wrote it. Nemotron's review sits above the gates. It can add issues, escalate to a person or request more checks, which sends the planner back for evidence, but it can never clear a gate. When it asks for a rewrite that needs no new evidence, its points are kept as notes on the answer for the owner to read.
+
+Every call is logged in the trace with the role, the model requested, the model that answered and the latency. Model output is validated against a schema. Invalid output gets one repair attempt, then the role's deterministic policy takes over with a warning in the trace, so a model failure never breaks a run. Nemotron 3 models reason before answering by default, and that reasoning used up the whole token budget, so the client turns thinking off and asks for the JSON answer directly.
+
+## How the model client relates to Meterless
+
+`src/llm/nightshift.ts` was written to the Meterless Runtime provider contract 0.90.0. It normalizes any pasted URL to `<host>/v1`, sends a bearer token, sends `meterless-app: slavery-compliance-agent` on every request and `meterless-scope: user` on chat, decides status from `GET /v1/models` (401 or 403 is unauthorized, not offline) and supports Auto Detect on ports 8088, 8090, 8787 and 11434. The demo points it at NVIDIA's API, because the free Mac edition of Nightshift runs only small models on the Mac's own GPU. Our Meterless integration is the World Model engine described above.
 
 ## What was unique about our use of the sponsor technologies
 
 - Zetaris carries the evidence chain, not just the data. Each answer cites evidence, each evidence item cites the Zetaris queries that produced it, and the evidence pack prints the SQL. A client's procurement team can audit any claim.
 - The World Model's merge bands solve a real fragmented-data problem: supplier portals do not carry your internal IDs. The review band becomes a human-in-the-loop step in the product, and the person's decision persists as an alias event.
 - The risk level history in the World Model shows the agent changing its mind with evidence, which is exactly what "explain why" asks for.
-- The evaluator's gates are a floor that the model cannot lower, and Nemotron is the independent judge above them.
+- The evaluator's gates are a floor that the model cannot lower, and Nemotron is the judge above them, reviewing drafts it did not write.
