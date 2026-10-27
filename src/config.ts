@@ -34,7 +34,7 @@ export const config = {
     password: env("ZETARIS_PASSWORD"),
     engineId: env("ZETARIS_ENGINE_ID"),
     queryLimit: num("ZETARIS_QUERY_LIMIT", 5000),
-    timeoutMs: num("ZETARIS_TIMEOUT_MS", 120_000),
+    timeoutMs: num("ZETARIS_TIMEOUT_MS", 300_000),
     // How Zetaris (inside Docker) reaches services on your machine.
     sourceHost: env("ZETARIS_SOURCE_HOST", "host.docker.internal"),
   },

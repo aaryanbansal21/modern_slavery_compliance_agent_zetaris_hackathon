@@ -127,8 +127,7 @@ WITH names AS (
   ${rows}
 ),
 scored AS (
-  SELECT n.entity_id, n.screened_name, d.list_id, d.name AS listed_name, d.name_type, d.entity_type,
-         d.citizenship, d.address, d.regime, d.listed_on, d.source,
+  SELECT n.entity_id, n.screened_name, d.list_id, d.name AS listed_name,
          GREATEST(
            1.0 - CAST(levenshtein(n.screened_norm, d.name_norm) AS DOUBLE) / GREATEST(length(n.screened_norm), length(d.name_norm)),
            1.0 - CAST(levenshtein(n.screened_sorted, d.name_sorted) AS DOUBLE) / GREATEST(length(n.screened_sorted), length(d.name_sorted))
@@ -138,16 +137,20 @@ scored AS (
   WHERE length(d.name_norm) > 0
 ),
 ranked AS (
-  SELECT entity_id, screened_name, list_id, listed_name, name_type, entity_type, citizenship, address, regime,
-         listed_on, source, score,
+  SELECT entity_id, screened_name, list_id, listed_name, score,
          ROW_NUMBER() OVER (PARTITION BY entity_id ORDER BY score DESC, list_id) AS rn
   FROM scored
+),
+kept AS (
+  SELECT * FROM ranked WHERE rn <= ${sqlNumber(nearMisses)} OR score >= ${sqlNumber(threshold)}
 )
-SELECT entity_id, screened_name, list_id, listed_name, name_type, entity_type, citizenship, address, regime,
-       listed_on, source, ROUND(score, 4) AS score, rn
-FROM ranked
-WHERE rn <= ${sqlNumber(nearMisses)} OR score >= ${sqlNumber(threshold)}
-ORDER BY entity_id, score DESC`;
+-- Score and rank on names only, then join the wide columns back for the few rows kept.
+-- Carrying them through the cross join and window crashed Spark on a Mini cluster.
+SELECT k.entity_id, k.screened_name, k.list_id, k.listed_name, d.name_type, d.entity_type, d.citizenship, d.address,
+       d.regime, d.listed_on, d.source, ROUND(k.score, 4) AS score, k.rn
+FROM kept k
+JOIN rs_ref.dfat_sanctions d ON d.list_id = k.list_id AND d.name = k.listed_name
+ORDER BY k.entity_id, k.score DESC`;
   },
 
   sanctionsListSize: () => `

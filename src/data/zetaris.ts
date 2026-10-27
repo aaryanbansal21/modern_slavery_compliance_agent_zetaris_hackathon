@@ -75,6 +75,10 @@ export class ZetarisSource implements DataSource {
         signal: AbortSignal.timeout(this.cfg.timeoutMs),
       });
     } catch (err) {
+      // A timed-out query may still be running in Spark, so resending it would pile up work.
+      if ((err as Error).name === "TimeoutError") {
+        throw new ZetarisError(`Zetaris did not answer within ${this.cfg.timeoutMs} ms (ZETARIS_TIMEOUT_MS)`, undefined, false);
+      }
       throw new ZetarisError(`Cannot reach Zetaris at ${this.cfg.baseUrl}: ${(err as Error).message}`, undefined, true);
     }
     if (res.status === 401 && !retried && !this.cfg.apiKey) {
